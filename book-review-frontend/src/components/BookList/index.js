@@ -1,27 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import './styles.css';
-
+import API_BASE_URL from '../../config';
+import axios from 'axios';
 
 function BookList() {
   const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch books from my API
-    fetch('YOUR_BACKEND_API_URL/books')
-      .then(response => response.json())
-      .then(data => setBooks(data));
-  }, []); // The empty array means this useEffect will run once when the component mounts
+      async function fetchBooks() {
+          try {
+            const response = await axios.get(`${API_BASE_URL}/books/`);
+              setBooks(response.data);
+              setLoading(false);
+          } catch (error) {
+              console.error("Error fetching books:", error);
+              setLoading(false);
+          }
+      }
+
+      fetchBooks();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="book-list">
-      {books.map(book => (
-        <div key={book.id} className="book">
-          <h2>{book.title}</h2>
-          <p>{book.author}</p>
-          <p>{book.review}</p>
-        </div>
-      ))}
-    </div>
+      <div>
+          {books.map(book => (
+              <div key={book.id}>
+                  <h3>{book.title}</h3>
+                  <p>{book.description}</p>
+              </div>
+          ))}
+      </div>
   );
 }
 

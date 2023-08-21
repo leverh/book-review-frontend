@@ -1,35 +1,45 @@
 import React, { useState } from 'react';
 import './styles.css';
+import API_BASE_URL from '../../config';
 
 
 function AddBook() {
-  const [book, setBook] = useState({ title: '', author: '', review: '' });
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Post the book data to my backend API
-    fetch('YOUR_BACKEND_API_URL/books', {
+
+    fetch(`${API_BASE_URL}books/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(book),
+      body: JSON.stringify({
+        title: title,
+        author: author
+      }),
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Success:', data);
+      console.log('Book added:', data);
     })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
+    .catch((error) => console.error("There was an error adding the book", error));
   };
 
   return (
-    <div className="add-book">
+    <div>
+      <h2>Add Book</h2>
       <form onSubmit={handleSubmit}>
-        {/* Add input fields for title, author, and review */}
-        {/* Use the book state to bind the values */}
-        {/* Add a submit button */}
+        <div>
+          <label>Title: </label>
+          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        </div>
+        <div>
+          <label>Author: </label>
+          <input type="text" value={author} onChange={(e) => setAuthor(e.target.value)} required />
+        </div>
+        <button type="submit">Add</button>
       </form>
     </div>
   );
