@@ -5,34 +5,31 @@ import axios from 'axios';
 
 function BookList() {
   const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-      async function fetchBooks() {
-          try {
-            const response = await axios.get(`${API_BASE_URL}/books/`);
-              setBooks(response.data);
-              setLoading(false);
-          } catch (error) {
-              console.error("Error fetching books:", error);
-              setLoading(false);
-          }
-      }
-
-      fetchBooks();
+    fetch(`${API_BASE_URL}books/`)
+      .then(response => response.json())
+      .then(data => {
+        setBooks(data);
+      })
+      .catch((error) => console.error("There was an error fetching the books", error));
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-
   return (
-      <div>
-          {books.map(book => (
-              <div key={book.id}>
-                  <h3>{book.title}</h3>
-                  <p>{book.description}</p>
-              </div>
-          ))}
-      </div>
+    <div>
+      <h2>Book List</h2>
+      <ul>
+        {books.map(book => (
+          <li key={book.id}>
+            <h3>{book.title}</h3>
+            <p>Author: {book.author}</p>
+            <p>ISBN: {book.isbn_number}</p>
+            <p>Summary: {book.summary}</p>
+            {book.cover_image && <img src={book.cover_image} alt={book.title} />}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
