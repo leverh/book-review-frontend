@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './styles.css';
 import API_BASE_URL from '../../config';
-import axios from 'axios';
 
 function BookList() {
   const [books, setBooks] = useState([]);
@@ -9,26 +8,29 @@ function BookList() {
   useEffect(() => {
     fetch(`${API_BASE_URL}books/`)
       .then(response => response.json())
-      .then(data => {
-        setBooks(data);
-      })
-      .catch((error) => console.error("There was an error fetching the books", error));
-  }, []);
+      .then(data => setBooks(data))
+      .catch(error => console.error("Error fetching books:", error));
+  }, []);  // The empty array means this useEffect runs once when the component mounts
 
   return (
     <div>
       <h2>Book List</h2>
-      <ul>
-        {books.map(book => (
-          <li key={book.id}>
-            <h3>{book.title}</h3>
-            <p>Author: {book.author}</p>
-            <p>ISBN: {book.isbn_number}</p>
-            <p>Summary: {book.summary}</p>
-            {book.cover_image && <img src={book.cover_image} alt={book.title} />}
-          </li>
-        ))}
-      </ul>
+      <table className='table'>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+          </tr>
+        </thead>
+        <tbody>
+          {books.map(book => (
+            <tr key={book.id}>
+              <td>{book.title}</td>
+              <td>{book.author}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
